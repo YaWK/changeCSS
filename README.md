@@ -20,7 +20,7 @@ The benefits of changeCSS will be:
 <h2>How will it work when it's finished?</h2>
 You get a beautiful web frontend, where you can upload your desired css file. The file gets processed, and a set of fields corresponding to your uploaded file will be generated "on the fly" in real time. All values of this fields can be changed easily via a user-friendly interface. The overview generates itself automatically, depending on the content of your css file. After you applied your desired changes, you can save and download the modified css file. You just need to replace the new css file with the old one in your project, refresh your browser and you will see your freshly updated design with the changes you made before with the help of changeCSS.
 
-<h2>but why?</h2>
+<h2>But why?</h2>
 Because sometimes you just want to change a few things in a css file, but you don't want to go through the whole file and change it manually. This is where changeCSS comes in handy. It's a tool to make your life easier.
 
 
