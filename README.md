@@ -24,12 +24,11 @@ You get a beautiful web frontend, where you can upload your desired css file. Th
 Because sometimes you just want to change a few things in a css file, but you don't want to go through the whole file and change it manually. This is where changeCSS comes in handy. It's a tool to make your life easier.
 
 
-Yet this is just an example. The codebase of this project will grow as functionallity and features expands over time.
-Right now, this is just a test-case-scenario. You can use this example with your own css file to play around and see how it works.
+Yet this is just an example. The codebase of this project will grow as functionality and features expands over time.
 
 
 <h2>Demo</h2>
-Just clone the repository, upload it to your favourite webserver and open index.php in your browser. Please consider: this is work in progress. The class is not finished yet. It's just a test case scenario. The class will be finished as time goes by.
+Just clone the repository, upload it to your favourite webserver and open index.php in your browser.
 
 <h2>How to use the class?</h2>
 
@@ -39,11 +38,18 @@ Just clone the repository, upload it to your favourite webserver and open index.
 <?php
 // include the class
 require_once('changeCSS.class.php');
+
 // create a new instance
 $parser = new CssParser();
+
 // read the css file
 $result = $parser->read('yourfile.css');
+
 // show the data
 $parser->showData($result, ".btn");
 ```
-...
+<hr>
+
+Please consider: Right now, this is just a test-case-scenario. You can use this example with your own css file to play around and see how it works.
+Project will grow as time goes by.
+
