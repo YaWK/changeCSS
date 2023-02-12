@@ -45,6 +45,6 @@ $result = $parser->read('yourfile.css');
 
 // show the data
 $parser->showData($result, ".btn");
-?>
 ```
+
 Please consider: this is work in progress. The class is not finished yet. It's just a test case scenario. The class will be finished as time goes by.
