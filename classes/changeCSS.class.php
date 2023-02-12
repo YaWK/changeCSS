@@ -145,6 +145,6 @@ $parser->showData($result, ".btn");
 // print_r($result);
 echo "</div></div>";
 ?>
-<link rel="stylesheet" href="assets/css/bootstrap.min.css"/>
-<script src="assets/js/bootstrap.min.js"></script>
-<script src="assets/js/jscolor.min.js"></script>
+<link rel="stylesheet" href="../assets/css/bootstrap.min.css"/>
+<script src="../assets/js/bootstrap.min.js"></script>
+<script src="../assets/js/jscolor.min.js"></script>
