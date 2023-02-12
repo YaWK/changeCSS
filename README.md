@@ -29,22 +29,17 @@ Right now, this is just a test-case-scenario. You can use this example with your
 
 
 <h2>Demo</h2>
-Just clone the repository, upload it to your favourite webserver and open index.php in your browser. 
+Just clone the repository, upload it to your favourite webserver and open index.php in your browser. Please consider: this is work in progress. The class is not finished yet. It's just a test case scenario. The class will be finished as time goes by.
 
 <h2>How to use the class?</h2>
 ```php
 <?php
 // include the class
 require_once('changeCSS.class.php');
-
 // create a new instance
 $parser = new CssParser();
-
 // read the css file
 $result = $parser->read('yourfile.css');
-
 // show the data
 $parser->showData($result, ".btn");
 ```
-
-Please consider: this is work in progress. The class is not finished yet. It's just a test case scenario. The class will be finished as time goes by.
