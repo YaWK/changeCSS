@@ -1,6 +1,6 @@
 <?php
 class CssParser {
-    public function read($cssFile, $returnSelectorOnly = false, $regExpFilter = "") 
+    public function read($cssFile, $returnSelectorOnly = false, $regExpFilter = "")
     {
         $result = [];
         $error = [];
@@ -12,10 +12,10 @@ class CssParser {
             $result['debug-errors-cssreader'] = $error;
             return $result;
         }
-        
+
         // Remove comments from CSS
         $css = preg_replace('/\/\*[\s\S]*?\*\//', '', $css);
-        
+
 
         // Extract selectors and rules
         $selectorRegExp = '/([^{]+)\{([^}]*)\}/';
@@ -67,7 +67,7 @@ class CssParser {
                 $mediaSelector = $mediaMatches[0][$i];
                 $result[$mediaSelector] = $mediaRules;
             }
-        } 
+        }
 
         else {
             $error[] = 'No selectors found in CSS';
@@ -76,68 +76,68 @@ class CssParser {
 
 
 
-        
+
         if ($error) {
             $result['debug-errors-cssreader'] = $error;
         }
-        
+
         return $result;
-        }
+    }
 
-        public function showData($result, $selectorFilter)
+    public function showData($result, $selectorFilter)
+    {
+        if (is_array($result))
         {
-            if (is_array($result))
+            foreach ($result as $selector => $data)
             {
-                foreach ($result as $selector => $data) 
-                {   
-                    // check if selector was set
-                    if (!empty($selectorFilter) && (is_string($selectorFilter)))
-                    {               
-                        // filter css selectors for processing
-                        if(strpos($selector, $selectorFilter) !== false)
+                // check if selector was set
+                if (!empty($selectorFilter) && (is_string($selectorFilter)))
+                {
+                    // filter css selectors for processing
+                    if(strpos($selector, $selectorFilter) !== false)
+                    {
+                        // draw selector name as title
+                        echo "<h2>".$selector."</h2>";
+
+                        // start with allowed css selectors
+                        if (is_array($data))
                         {
-                            // draw selector name as title
-                            echo "<h2>".$selector."</h2>";
+                            // process content data of selector
+                            foreach ($data as $property => $value)
+                            {   // process properties (detect and set appropriate fields)
 
-                            // start with allowed css selectors
-                            if (is_array($data))
-                            {   
-                                // process content data of selector
-                                foreach ($data as $property => $value) 
-                                {   // process properties (detect and set appropriate fields)
-
-                                    // detect type:
-                                    if (strpos($property, "color") || ($property == "color"))
-                                    {   // draw color picker field
-                                        echo '&nbsp;&nbsp;<label for="$property"><b class="text-muted">'.$property.' : '.$value.'</b> <input type="text" id="'.$property.'" name="'.$property.'" data-jscolor="{previewSize:182, borderRadius:6, padding:0, sliderSize:110, 
+                                // detect type:
+                                if (strpos($property, "color") || ($property == "color"))
+                                {   // draw color picker field
+                                    echo '&nbsp;&nbsp;<label for="$property"><b class="text-muted">'.$property.' : '.$value.'</b> <input type="text" id="'.$property.'" name="'.$property.'" data-jscolor="{previewSize:182, borderRadius:6, padding:0, sliderSize:110, 
     shadowColor:\'rgba(0,0,0,0.15)\'}" class="form-control" value="'.$value.'" style="width: 300px;"></label><br>';
-                                    }
-                                    else if (strpos($property, "-shadow") || ($property == "box-shadow"))
-                                    {   // draw color picker field
-                                        echo '&nbsp;&nbsp;<label for="$property"><b class="text-muted">'.$property.' : '.$value.'</b> <input type="text" id="'.$property.'" name="'.$property.'" class="form-control" value="'.$value.'" style="width: 234px;></label><br>';
-                                    }
-                                    else 
-                                    {   // simple variant: display css property and value 
-                                        echo '&nbsp;&nbsp;<b class="text-danger">'.$property.' : </b> = '.$value.'<br>';
-                                        //echo '&nbsp;&nbsp;<b class="text-muted">'.$property.' : </b> = '.$value.'<br>';
-                                    }
-
                                 }
-                            }
-                            else 
-                            {   // not an array: this should not be possible.
-                                echo $data."<br>";
-                            }
-                            echo "<hr>";  
-                        }
-                    }
+                                else if (strpos($property, "-shadow") || ($property == "box-shadow"))
+                                {   // draw color picker field
+                                    echo '&nbsp;&nbsp;<label for="$property"><b class="text-muted">'.$property.' : '.$value.'</b> <input type="text" id="'.$property.'" name="'.$property.'" class="form-control" value="'.$value.'" style="width: 234px;></label><br>';
+                                }
+                                else
+                                {   // simple variant: display css property and value
+                                    echo '&nbsp;&nbsp;<b class="text-danger">'.$property.' : </b> = '.$value.'<br>';
+                                    //echo '&nbsp;&nbsp;<b class="text-muted">'.$property.' : </b> = '.$value.'<br>';
+                                }
 
+                            }
+                        }
+                        else
+                        {   // not an array: this should not be possible.
+                            echo $data."<br>";
+                        }
+                        echo "<hr>";
+                    }
                 }
-            }
-            else {
-                die('$result is not an array!');
+
             }
         }
+        else {
+            die('$result is not an array!');
+        }
+    }
 }
 
 echo '<div class="container"><div class="col-md-12">';
