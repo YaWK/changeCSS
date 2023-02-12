@@ -1,14 +1,14 @@
 <?php
 class CssParser {
-    public function read($cssFile, $returnSelectorOnly = false, $regExpFilter = "")
+    public function read($cssFile, $returnSelectorOnly = false, $regExpFilter = ""): array
     {
         $result = [];
         $error = [];
 
         try {
             $css = file_get_contents($cssFile);
-        } catch (ErrorException $e) {
-            $error[] = 'File not found or cannot be read: ' . $cssFile;
+        } catch (Exception $e) {
+            $error[] = 'Exception '.$e.' File not found or cannot be read: ' . $cssFile;
             $result['debug-errors-cssreader'] = $error;
             return $result;
         }
@@ -16,9 +16,8 @@ class CssParser {
         // Remove comments from CSS
         $css = preg_replace('/\/\*[\s\S]*?\*\//', '', $css);
 
-
         // Extract selectors and rules
-        $selectorRegExp = '/([^{]+)\{([^}]*)\}/';
+        $selectorRegExp = '/([^{]+)\{([^}]*)}/';
         if (preg_match_all($selectorRegExp, $css, $matches, PREG_SET_ORDER)) {
             foreach ($matches as $match) {
                 $selector = trim($match[1]);
@@ -27,41 +26,19 @@ class CssParser {
                         $result[] = $selector;
                     }
                 } else {
-                    $rules = array_filter(array_map('trim', explode(';', $match[2])));
-                    $rules_arr = [];
-                    foreach ($rules as $rule) {
-                        $parts = array_map('trim', explode(':', $rule));
-                        if (count($parts) == 2) {
-                            $rules_arr[$parts[0]] = $parts[1];
-                        }
-                    }
-                    $selectors = array_map('trim', explode(',', $selector));
-                    foreach ($selectors as $sel) {
-                        $result[$sel] = $rules_arr;
-                    }
+                    list($rules, $rules_arr, $rule, $parts, $selectors, $sel, $result) = $this->extracted($match[2], $selector, $result);
                 }
             }
         }
         // Extract media queries and nested selectors/rules
-        $mediaRegExp = '/@media[^{]+\{([\s\S]*?)\}/';
+        $mediaRegExp = '/@media[^{]+\{([\s\S]*?)}/';
         if (preg_match_all($mediaRegExp, $css, $mediaMatches)) {
             foreach ($mediaMatches[0] as $i => $mediaMatch) {
                 $mediaRules = [];
                 if (preg_match_all($selectorRegExp, $mediaMatches[1][$i], $matches, PREG_SET_ORDER)) {
                     foreach ($matches as $match) {
                         $selector = trim($match[1]);
-                        $rules = array_filter(array_map('trim', explode(';', $match[2])));
-                        $rules_arr = [];
-                        foreach ($rules as $rule) {
-                            $parts = array_map('trim', explode(':', $rule));
-                            if (count($parts) == 2) {
-                                $rules_arr[$parts[0]] = $parts[1];
-                            }
-                        }
-                        $selectors = array_map('trim', explode(',', $selector));
-                        foreach ($selectors as $sel) {
-                            $mediaRules[$sel] = $rules_arr;
-                        }
+                        list($rules, $rules_arr, $rule, $parts, $selectors, $sel, $result) = $this->extracted($match[2], $selector, $mediaRules);
                     }
                 }
                 $mediaSelector = $mediaMatches[0][$i];
@@ -73,10 +50,6 @@ class CssParser {
             $error[] = 'No selectors found in CSS';
         }
 
-
-
-
-
         if ($error) {
             $result['debug-errors-cssreader'] = $error;
         }
@@ -84,7 +57,7 @@ class CssParser {
         return $result;
     }
 
-    public function showData($result, $selectorFilter)
+    public function showData($result, $selectorFilter): void
     {
         if (is_array($result))
         {
@@ -94,7 +67,7 @@ class CssParser {
                 if (!empty($selectorFilter) && (is_string($selectorFilter)))
                 {
                     // filter css selectors for processing
-                    if(strpos($selector, $selectorFilter) !== false)
+                    if(str_contains($selector, $selectorFilter))
                     {
                         // draw selector name as title
                         echo "<h2>".$selector."</h2>";
@@ -138,6 +111,29 @@ class CssParser {
             die('$result is not an array!');
         }
     }
+
+    /**
+     * @param $match
+     * @param string $selector
+     * @param array $result
+     * @return array
+     */
+    public function extracted($match, string $selector, array $result): array
+    {
+        $rules = array_filter(array_map('trim', explode(';', $match)));
+        $rules_arr = [];
+        foreach ($rules as $rule) {
+            $parts = array_map('trim', explode(':', $rule));
+            if (count($parts) == 2) {
+                $rules_arr[$parts[0]] = $parts[1];
+            }
+        }
+        $selectors = array_map('trim', explode(',', $selector));
+        foreach ($selectors as $sel) {
+            $result[$sel] = $rules_arr;
+        }
+        return array($rules, $rules_arr, $rule, $parts, $selectors, $sel, $result);
+    }
 }
 
 echo '<div class="container"><div class="col-md-12">';
@@ -149,6 +145,6 @@ $parser->showData($result, ".btn");
 // print_r($result);
 echo "</div></div>";
 ?>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/css/bootstrap.min.css" integrity="sha512-Ez0cGzNzHR1tYAv56860NLspgUGuQw16GiOOp/I2LuTmpSK9xDXlgJz3XN4cnpXWDmkNBKXR/VDMTCnAaEooxA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.1/js/bootstrap.min.js" integrity="sha512-EKWWs1ZcA2ZY9lbLISPz8aGR2+L7JVYqBAYTq5AXgBkSjRSuQEGqWx8R1zAX16KdXPaCjOCaKE8MCpU0wcHlHA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="jscolor.min.js"></script>
+<link rel="stylesheet" href="assets/css/bootstrap.min.css"/>
+<script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/jscolor.min.js"></script>
