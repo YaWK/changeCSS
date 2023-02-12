@@ -76,8 +76,8 @@ if(isset($_FILES['css-file']) && $_FILES['css-file']['error'] === UPLOAD_ERR_OK)
         if (is_array($value)){
             echo '<h2>'.$property.'</h2><hr>';
             foreach ($value as $data => $datavalue){
-                echo '<label for="$property"><b class="text-muted">'.$data.'</b> <input type="text" id="'.$data.'" name="'.$data.'" data-jscolor="{previewSize:182, borderRadius:6, padding:0, sliderSize:110, 
-    shadowColor:\'rgba(0,0,0,0.15)\'}" class="form-control color" value="'.$datavalue.'" style="width: 300px;"></label><br>';
+                echo '<label for="$property">'.$property.' : <b class="text-muted">'.$data.'</b> <input type="text" id="'.$data.'" name="'.$data.'" data-jscolor="{previewSize:182, borderRadius:6, padding:0, sliderSize:110, 
+    shadowColor:\'rgba(0,0,0,0.15)\'}" class="form-control" value="'.$datavalue.'" style="width: 300px;"></label><br>';
             }
         echo '<br><br>';
         }

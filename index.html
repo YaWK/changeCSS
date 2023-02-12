@@ -40,7 +40,7 @@
                     <a class="nav-link" href="#">Documentation</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">GitHub</a>
+                    <a class="nav-link" href="https://www.github.com/YAWK/changeCSS/" target="_blank">GitHub</a>
                 </li>
             </ul>
             <form class="form-inline mt-2 mt-md-0">
@@ -57,10 +57,10 @@
     <hr>
     <p class="lead">Upload any css file, press on "generate fields" and start to modify CSS the easy way.</p>
 
-    <form id="css-upload-form" method="post" enctype="multipart/form-data">
+    <form id="css-upload-form" class="form-control" method="post" enctype="multipart/form-data">
         <label for="css-file">Upload CSS file:</label>
         <input type="file" id="css-file" name="css-file">
-        <button type="submit">Submit</button>
+        <button type="submit" class="btn btn-success">Submit</button>
     </form>
     <div id="css-editor"></div>
 
