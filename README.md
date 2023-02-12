@@ -33,7 +33,6 @@ Just clone the repository, upload it to your favourite webserver and open index.
 
 <h2>How to use the class?</h2>
 ```php
-<?php
 // include the class
 require_once('changeCSS.class.php');
 // create a new instance
