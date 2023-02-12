@@ -57,11 +57,13 @@
     <hr>
     <p class="lead">Upload any css file, press on "generate fields" and start to modify CSS the easy way.</p>
 
-        <form action="process.php" method="post" enctype="multipart/form-data">
-            <label for="css-file">Upload CSS file:</label>
-            <input type="file" id="css-file" name="css-file">
-            <button type="submit" class="btn btn-success">Generate Fields</button>
-        </form>
+    <form id="css-upload-form" method="post" enctype="multipart/form-data">
+        <label for="css-file">Upload CSS file:</label>
+        <input type="file" id="css-file" name="css-file">
+        <button type="submit">Submit</button>
+    </form>
+    <div id="css-editor"></div>
+
     <hr>
     <p>Or view an <a href="../sticky-footer/">Example with pre-defined css files</a> to see it in action.</p>
 </main>
@@ -75,9 +77,60 @@
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="assets/js/jquery-3.2.1.slim.min.js"></script>
-<script>window.jQuery || document.write('<script src="assets/js/jquery-3.2.1.slim.min.js"><\/script>')</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="assets/js/popper.min.js"></script>
 <script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/jscolor.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Handle file upload form submission
+        $('#css-upload-form').submit(function(event) {
+            event.preventDefault();
+            var formData = new FormData($(this)[0]);
+            $.ajax({
+                url: 'classes/process.php',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    $('#css-editor').html(response);
+                },
+                error: function(xhr, status, error) {
+                    console.log('Error: ' + error);
+                }
+            });
+        });
+
+// Handle update form submission
+        $('#css-editor').on('submit', 'form#css-update-form', function(event) {
+            event.preventDefault();
+            var formData = new FormData(this);
+            formData.append('filename', $('input[name="filename"]').val());
+            $.ajax({
+                url: 'classes/update.php',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    var a = document.createElement('a');
+                    var url = window.URL.createObjectURL(new Blob([response]));
+                    a.href = url;
+                    a.download = $('input[name="filename"]').val();
+                    $('body').append(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    $(a).remove();
+                },
+                error: function(xhr, status, error) {
+                    console.log('Error: ' + error);
+                }
+            });
+        });
+    });
+
+
+</script>
 </body>
 </html>
