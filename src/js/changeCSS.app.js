@@ -14,10 +14,15 @@ $(document).ready(function() {
             processData: false,
             success: function(response) {
                 // Update the CSS editor with the response HTML
-                $('#leadText').slideUp(600);
+                $('#leadText').slideUp(800);
                 $('#css-upload-form').slideUp(800);
                 $('#css-editor').html(response).css('opacity', 0)
-                    .slideDown(800)
+                    .slideDown(800, function() {
+                        // Install jscolor after the response HTML has been fully loaded
+//                        jscolor.installByClassName('form-control');
+                        document.querySelector('#color').innerHTML += '<input data-jscolor="{}">'
+                        jscolor.install() // recognizes new inputs and installs jscolor on them
+                    })
                     .animate(
                         { opacity: 1 },
                         { queue: false, duration: 960 }
