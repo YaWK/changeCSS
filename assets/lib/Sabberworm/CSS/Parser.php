@@ -59,5 +59,3 @@ class Parser
     }
 }
 
-$parser = new \Sabberworm\CSS\Parser(file_get_contents('bootstrap5.css'));
-$cssDocument = $parser->parse();
