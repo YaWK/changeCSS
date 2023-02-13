@@ -1,16 +1,16 @@
 $(document).ready(function() {
     // Handle file upload form submission
-    $('form').submit(function(event) {
+    $('#css-upload-form').submit(function(event) {
         event.preventDefault();
         var formData = new FormData($(this)[0]);
         $.ajax({
-            url: 'classes/process.php',
+            url: 'src/classes/process.php',
             type: 'POST',
             data: formData,
             contentType: false,
             processData: false,
             success: function(response) {
-                $('body').html(response);
+                $('#css-editor').html(response);
             },
             error: function(xhr, status, error) {
                 console.log('Error: ' + error);
@@ -18,14 +18,17 @@ $(document).ready(function() {
         });
     });
 
-    // Handle update form submission
-    $('body').on('submit', 'form#update-form', function(event) {
+// Handle update form submission
+    $('#css-editor').on('submit', 'form#css-update-form', function(event) {
         event.preventDefault();
-        var formData = $(this).serialize();
+        var formData = new FormData(this);
+        formData.append('filename', $('input[name="filename"]').val());
         $.ajax({
-            url: 'classes/update.php',
+            url: 'src/classes/update.php',
             type: 'POST',
             data: formData,
+            processData: false,
+            contentType: false,
             success: function(response) {
                 var a = document.createElement('a');
                 var url = window.URL.createObjectURL(new Blob([response]));
