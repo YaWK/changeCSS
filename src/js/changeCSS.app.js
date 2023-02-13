@@ -14,7 +14,14 @@ $(document).ready(function() {
             processData: false,
             success: function(response) {
                 // Update the CSS editor with the response HTML
-                $('#css-editor').html(response);
+                $('#leadText').slideUp(600);
+                $('#css-upload-form').slideUp(800);
+                $('#css-editor').html(response).css('opacity', 0)
+                    .slideDown(800)
+                    .animate(
+                        { opacity: 1 },
+                        { queue: false, duration: 960 }
+                    );
             },
             error: function(xhr, status, error) {
                 // Handle AJAX errors
