@@ -25,7 +25,6 @@ spl_autoload_register('autoload');
 if(isset($_FILES['css-file']) && $_FILES['css-file']['error'] === UPLOAD_ERR_OK) {
     $file = $_FILES['css-file']['tmp_name'];
     $filename = $_FILES['css-file']['name'];
-    // $css = file_get_contents($file);     // OLD CODE
 
     $parser = new Parser(file_get_contents($file));
     try {   // parse the file
@@ -85,6 +84,7 @@ if(isset($_FILES['css-file']) && $_FILES['css-file']['error'] === UPLOAD_ERR_OK)
 
     // build form fields for each css property
     echo '<form id="css-update-form" method="POST">';
+    echo '<p>processed: '.$filename.'</p>';
     foreach ($properties as $selector => $data){
         if (is_array($data)){
             echo '<h2>'.$selector.'</h2><hr>';
