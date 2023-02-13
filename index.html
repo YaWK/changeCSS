@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+    <!-- meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="With changeCSS, you can easily modify and customize CSS files. Upload any CSS file, generate a set of fields on-the-fly in real-time, change the content using a user-friendly interface, and download the modified CSS file. Save time and effort by using this simple and effective solution.">
@@ -9,17 +10,18 @@
     <link rel="icon" type="image/png" sizes="32x32" href="assets/ico/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="assets/ico/favicon-16x16.png">
     <link rel="manifest" href="assets/ico/site.webmanifest">
+    <!-- Website Title -->
     <title>changeCSS makes re-design of webpages easier, saves time and helps you to update any website branding fast. Compatible with any stylesheet and css file</title>
-
     <!-- Bootstrap core CSS -->
     <link href="assets/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- Custom styles for this template -->
     <link href="assets/css/sticky-footer-navbar.css" rel="stylesheet">
+    <!-- Include Animate.css library -->
+    <link href="assets/css/animate.min.css" rel="stylesheet">
 </head>
 
 <body>
-
+<!-- header start -->
 <header>
     <!-- Fixed navbar -->
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
@@ -49,12 +51,13 @@
         </div>
     </nav>
 </header>
+<!-- header end -->
 
-<!-- Begin page content -->
+<!-- page content start -->
 <main role="main" class="container">
     <h1 class="mt-5">changeCSS <small>makes re-design easier, <br><small>saves time and helps you to update any website branding fast.</small></small></h1>
     <hr>
-    <p class="lead">Upload any css file, press on "generate fields" and start to modify CSS the easy way.</p>
+    <p class="lead" id="leadText">Upload any css file, press on "generate fields" and start to modify CSS the easy way.</p>
 
     <form id="css-upload-form" class="form-control" method="post" enctype="multipart/form-data">
         <label for="css-file">Upload CSS file:</label>
@@ -62,18 +65,20 @@
         <button type="submit" class="btn btn-success">Submit</button>
     </form>
     <div id="css-editor"></div>
-
     <hr>
     <p>Or view an <a href="../sticky-footer/">Example with pre-defined css files</a> to see it in action.</p>
 </main>
+<!-- page content end -->
 
+<!-- footer start -->
 <footer class="footer">
     <div class="container">
         <span class="text-muted"><b>changeCSS</b> is part of a much bigger web project: <a href="https://www.github.com/YaWK/yawk.io" target="_blank">check it out on GitHub!</a></span>
     </div>
 </footer>
+<!-- footer end -->
 
-<!-- Bootstrap core JavaScript
+<!-- jQuery, bootstrap and other core javaScript libraries
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="assets/js/jquery.min.js"></script>
@@ -83,3 +88,4 @@
 <script src="src/js/changeCSS.app.js"></script>
 </body>
 </html>
+<!-- EOF -->
