@@ -27,10 +27,7 @@ Because sometimes you just want to change a few things in a css file, but you do
 The project is built with PHP and Javascript. The PHP class is used to read the css file and generate the fields. The Javascript is used to generate the overview and to handle the user input.
 
 <h2>What is the current state of the project?</h2>
-The project is currently in a very early stage. It's just a test case scenario. The class is able to read a css file and generate the fields. The fields are generated in real time, depending on the content of the css file. The overview is generated automatically, depending on the content of the css file. The user input is handled and the values are stored in an array.
-
-
-Yet this is just an example. The codebase of this project will grow as functionality and features expands over time.
+The project is currently in a very early stage. It's just a test case scenario. The class is able to read a css file and generate the fields. The fields are generated in real time, depending on the content of the css file. The overview is generated automatically, depending on the content of the css file. The user input is handled and the values are stored in an array. Yet this is just an example. The codebase of this project will grow as functionality and features expands over time.
 
 
 <h2>Demo</h2>
