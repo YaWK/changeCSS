@@ -116,5 +116,36 @@ class changeCSSApp
         return $properties;
     }
 
+    public function generateCssUpdateForm($properties): void
+    {
+        // build form fields for each css property
+        echo '<form id="css-update-form" method="POST">';
+        echo '<p>processed: '.$this->filename.'</p>';
+        foreach ($properties as $selector => $data){
+            if (is_array($data)){
+                echo '<h2>'.$selector.'</h2><hr>';
+                foreach ($data as $property => $value){
+
+
+                    if ($property == "color"
+                        || ($property == "background-color")
+                        || ($property == "border-color")) {
+                        echo '<label for="$property"><b class="text-muted">'.$property.'</b> <input type="text" id="'.$property.'" name="'.$property.'" data-jscolor="{previewSize:182, borderRadius:6, padding:0, sliderSize:110, 
+    shadowColor:\'rgba(0,0,0,0.15)\'}" class="form-control" value="'.$value.'" style="width: 300px;"></label><br>';
+                    }
+                    else {
+                        echo '<label for="$property"><b class="text-muted">'.$property.'</b> <input type="text" id="'.$property.'" name="'.$property.'" class="form-control" value="'.$value.'" style="width: 300px;"></label><br>';
+                    }
+
+
+                }
+                echo '<br><br>';
+            }
+        }
+        echo '<input type="hidden" name="filename" value="'.$this->filename.'">
+        <button type="submit">Save</button>
+        </form>';
+
+    }
 
 }
