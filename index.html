@@ -18,6 +18,12 @@
     <link href="assets/css/sticky-footer-navbar.css" rel="stylesheet">
     <!-- Include Animate.css library -->
     <link href="assets/css/animate.min.css" rel="stylesheet">
+    <!-- Include Pace Loader css -->
+    <link href="assets/css/pace-theme-default.css" rel="stylesheet">
+    <!-- Include FontAwesome icon library -->
+    <link href="assets/css/fontawesome.min.css" rel="stylesheet">
+    <!-- Include changeCSS.app.css -->
+    <link href="src/css/changeCSS.app.css" rel="stylesheet">
 </head>
 
 <body>
@@ -54,19 +60,69 @@
 <!-- header end -->
 
 <!-- page content start -->
-<main role="main" class="container">
-    <h1 class="mt-5">changeCSS <small>makes re-design easier, <br><small>saves time and helps you to update any website branding fast.</small></small></h1>
+<main role="main" class="container text-center">
+    <h1 class="mt-5">changeCSS<br><small class="text-muted"><span class="text-lightgrey">{</span> .redesign .made .easy <span class="text-lightgrey">}</span>
+        <br><small>Update any website stylesheet file. User-friendly.</small></small></h1>
     <hr>
-    <p class="lead" id="leadText">Upload any css file, press on "generate fields" and start to modify CSS the easy way.</p>
 
+    <!-- upload form: css file -->
     <form id="css-upload-form" class="form-control" method="post" enctype="multipart/form-data">
+        <br><br>
         <label for="css-file">Upload CSS file:</label>
-        <input type="file" id="css-file" name="css-file">
-        <button type="submit" class="btn btn-success">Submit</button>
+        <input type="file" id="css-file" name="css-file"><br><br>
+        <p class="lead" id="leadText">Upload your css file and start to modify it the easy way.<br>
+        A custom editor will be generated from the content of your file.</p>
+
+        <button type="submit" style="margin-bottom:60px;" class="btn btn-success">Start Stylesheet Generator</button>
     </form>
+
+
+
+</div>
+
     <div id="css-editor"></div>
     <hr>
     <p>Or view an <a href="../sticky-footer/">Example with pre-defined css files</a> to see it in action.</p>
+
+    <h3 class="mb-5">Use this to redesign<br><small>any framework, like Bootstrap or Tailwind</small></h3>
+    <h3 class="mb-5">Update Wordpress / CMS Themes<br><small>save theme css with new colors and settings</small></h3>
+    <h3 class="mb-5">Works with any CSS file<br><small>easy-to-use editor, tailored to the content of your file.</small></h3>
+    <h3 class="mb-5">Generated "on the fly"<br><small>the editor will be generated on the fly, customized to your file.</small></h3>
+    <h3 class="mb-5">Edit with ease<br><small>make all your changes within a nice and user friendly frontend.</small></h3>
+    <h3 class="mb-5">Download as new file<br><small>download the new css file, containing all your changes.</small></h3>
+    <div class="container">
+        <div class="row">
+            <!-- 3 cards -->
+            <div class="col-sm">
+                <!-- card 1 -->
+                <div class="card" style="width: 18rem;">
+                    <img class="card-img-top" src="https://via.placeholder.com/300">
+                    <div class="card-body">
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm">
+                <!-- card 2 -->
+                <div class="card" style="width: 18rem;">
+                    <img class="card-img-top" src="https://via.placeholder.com/300">
+                    <div class="card-body">
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm">
+                <!-- card 3 -->
+                <div class="card" style="width: 18rem;">
+                    <img class="card-img-top" src="https://via.placeholder.com/300">
+                    <div class="card-body">
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </main>
 <!-- page content end -->
 
@@ -84,8 +140,15 @@
 <script src="assets/js/jquery.min.js"></script>
 <script src="assets/js/popper.min.js"></script>
 <script src="assets/js/bootstrap.min.js"></script>
+<script data-pace-options='{ "restartOnPushState": true, restartOnRequestAfter: true }' src="assets/js/pace.min.js"></script>
 <script src="assets/js/jscolor.min.js"></script>
+<script src="assets/js/fontawesome.min.js"></script>
 <script src="src/js/changeCSS.app.js"></script>
+<script>
+    $(document).ajaxStart(function () {
+        Pace.restart();
+    });
+</script>
 </body>
 </html>
 <!-- EOF -->
