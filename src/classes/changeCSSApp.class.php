@@ -47,10 +47,6 @@ class changeCSSApp
                 echo 'There was an error parsing the given CSS file: ' . $this->filename . ' at line ' . $e->getLine() . ': ' . $e->getMessage();
             }
         }
-        else {
-            // if no file was uploaded, exit with error message
-            echo 'No CSS file was uploaded.';
-        }
         // check if document object was created
         if (!isset($cssDocument))
         {   // no css document object was created, exit with error message
@@ -64,8 +60,11 @@ class changeCSSApp
     }
 
     // get all properties from css document object
-    public function getProperties($cssDocument): array
+    public function getProperties($cssDocument): array|bool
     {
+        if (empty($cssDocument)){
+            return false;
+        }
         // init array to store CSS properties
         $properties = array();
 
@@ -116,11 +115,16 @@ class changeCSSApp
         return $properties;
     }
 
-    public function generateCssUpdateForm($properties): void
+    public function generateCssUpdateForm($properties): bool
     {
         // build form fields for each css property
         echo '<form id="css-update-form" method="POST">';
-        echo '<p>processed: '.$this->filename.'</p>';
+        if(!empty($this->filename)){
+            echo '<p>processed: '.$this->filename.'</p>';
+        }
+        else {
+            return false;
+        }
         foreach ($properties as $selector => $data){
             if (is_array($data)){
                 echo '<h2>'.$selector.'</h2><hr>';
