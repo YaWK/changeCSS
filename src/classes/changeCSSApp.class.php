@@ -3,6 +3,7 @@
 namespace YAWK\changeCSS;
 // import required CSS parser classes
 use Sabberworm\CSS\CSSList\CSSList;
+use Sabberworm\CSS\CSSList\Document;
 use Sabberworm\CSS\Parser;
 use Sabberworm\CSS\Parsing\SourceException;
 use Sabberworm\CSS\Value\Color;
@@ -29,7 +30,7 @@ class changeCSSApp
     }
 
     // parse css file that was uploaded before and return css document object
-    public function processFileUploadAndParseCSS()
+    public function processFileUploadAndParseCSS(): Document|bool
     {
         // Check if file was uploaded
         if (isset($_FILES['css-file']) && $_FILES['css-file']['error'] === UPLOAD_ERR_OK)
@@ -43,22 +44,23 @@ class changeCSSApp
                 $cssDocument = $parser->parse();
             } catch (SourceException $e)
             {   // parsing failed, exit with error message
-                die('There was an error parsing the given CSS file: ' . $this->filename . ' at line ' . $e->getLine() . ': ' . $e->getMessage());
+                echo 'There was an error parsing the given CSS file: ' . $this->filename . ' at line ' . $e->getLine() . ': ' . $e->getMessage();
             }
         }
         else {
             // if no file was uploaded, exit with error message
-            die('No CSS file was uploaded.');
+            echo 'No CSS file was uploaded.';
         }
         // check if document object was created
         if (!isset($cssDocument))
         {   // no css document object was created, exit with error message
-            die('No CSS file was uploaded. No CSS document object was created. Please check your file upload. Upload Error Details: ' . $_FILES['css-file']['error']);
+            echo 'No CSS file was uploaded. No CSS document object was created. Please check your file upload. Upload Error Details: ' . $_FILES['css-file']['error'];
         }
         else
         {   // return css document object
             return $cssDocument;
         }
+        return false;
     }
 
     // get all properties from css document object
@@ -113,5 +115,6 @@ class changeCSSApp
         }
         return $properties;
     }
+
 
 }
