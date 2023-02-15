@@ -15,5 +15,19 @@ $app = new changeCSS\changeCSSApp();
 $cssDocument = $app->processFileUploadAndParseCSS();
 // get all css properties into array
 $properties = $app->getProperties($cssDocument);
+
+// create static menu
+$tabElements = array('Body', 'Fonts' => array('h1', 'h2', 'h3'), 'Colors', 'Backgrounds', 'Borders', 'Margins', 'Paddings', 'Heights', 'Widths', 'Misc');
+$app->displayNavigation($tabElements, false);
+
 // generate form
 $app->generateCssUpdateForm($properties);
+
+// $app->testing();
+
+
+
+
+
+
+
