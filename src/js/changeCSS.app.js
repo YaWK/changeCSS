@@ -12,21 +12,20 @@ $(document).ready(function() {
             data: formData,
             contentType: false,
             processData: false,
+            cache: false,
             success: function(response) {
-                // Update the CSS editor with the response HTML
-                $('#leadText').slideUp(800);
+                // alert('CSS file uploaded successfully!');
+                //
+                $('#css-editor').html(response).css('opacity', 1);
+
+                document.querySelector(`[data-jscolor]`).innerHTML += '<input data-jscolor="{}">';
+                jscolor.install() // recognizes new inputs and installs jscolor on them
+                $('#firstLine').fadeOut(400);
+                $('#introduction').fadeOut(200);
+                $('#logo').fadeOut(600).slideUp(400);
+                $('#leadText').slideUp(680);
                 $('#css-upload-form').slideUp(800);
-                $('#css-editor').html(response).css('opacity', 0)
-                    .slideDown(800, function() {
-                        // Install jscolor after the response HTML has been fully loaded
-//                        jscolor.installByClassName('form-control');
-                        document.querySelector('#color').innerHTML += '<input data-jscolor="{}">'
-                        jscolor.install() // recognizes new inputs and installs jscolor on them
-                    })
-                    .animate(
-                        { opacity: 1 },
-                        { queue: false, duration: 960 }
-                    );
+
             },
             error: function(xhr, status, error) {
                 // Handle AJAX errors
@@ -69,4 +68,35 @@ $(document).ready(function() {
             }
         });
     });
+
+    var requestInProgress = false;
+    $(document).on('click', '.nav-item.nav-link', function(e) {
+        e.preventDefault();
+        var tabId = $(this).attr('href');
+        var group = $(this).text();
+//        var contentPane = tabId.replace('nav-tab-content-', 'nav-tab-content-box-content-');
+
+        $(tabId).html('<p>Loading... <b>'+group+'</b></p>'); // Loading indicator
+
+        document.querySelector(`[data-jscolor]`).innerHTML += '<input data-jscolor="{}">';
+        jscolor.install() // recognizes new inputs and installs jscolor on them
+
+        $.ajax({
+            url: 'src/classes/tab.php',
+            data: { tabId: tabId, group: group, action: 'getCSSNode' },
+            success: function (response) {
+                // $(tabId).html(response);
+                requestInProgress = false;
+
+            },
+            error: function (xhr, status, error) {
+                alert("Error: " + error);
+                requestInProgress = false;
+            }
+        });
+
+    });
+
+
+
 });
