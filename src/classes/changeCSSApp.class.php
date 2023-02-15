@@ -24,8 +24,8 @@ class changeCSSApp
     {
         // autoloader to include required parser assets
         spl_autoload_register(function ($class) {
-            $file = '../../assets/lib/'.str_replace('\\', '/', $class) . '.php';
-            require_once $file;
+        $file = '../../assets/lib/'.str_replace('\\', '/', $class) . '.php';
+        require_once $file;
         });
     }
 
@@ -106,7 +106,6 @@ class changeCSSApp
                     {   // For other value types, convert it to a string
                         $value = (string) $rule->getValue();
                     }
-
                     // Fill the $properties array with the selector, property, and value
                     $properties[$selector][$property] = $value;
                 }
@@ -115,15 +114,245 @@ class changeCSSApp
         return $properties;
     }
 
-    public function generateCssUpdateForm($properties): bool
+    // use this method to test things out
+    public function testing(): void
+    {   // exchange this with your own html markup
+        echo'hello world';
+    }
+
+    // generate html markup for css properties
+    function generateNavigation($tabElements, $parentTabCount = 0): string
+    {   // create navigation tab markup
+        $output = '<nav><div class="nav nav-tabs" id="nav-tab" role="tablist">';
+        // init tab counter
+        $tabCount = 0;
+        // init first tab active flag as boolean
+        $firstTabActive = true;
+        // loop through all tab elements
+        foreach ($tabElements as $key => $element) {
+            // init active class
+            $activeClass = '';
+            // check if first tab is active
+            if ($firstTabActive)
+            {   // set active class
+                $activeClass = ' active';
+                $firstTabActive = false;
+            }
+            // check if element is an array
+            if (is_array($element))
+            {   // element is an array, so it contains sub elements
+                $output .= '<a class="nav-item nav-link' . $activeClass . '" id="nav-tab-' . $parentTabCount . '-' . $tabCount . '" data-toggle="tab" href="#nav-tab-content-' . $parentTabCount . '-' . $tabCount . '" role="tab" aria-controls="nav-tab-' . $parentTabCount . '-' . $tabCount . '" aria-selected="false">' . $key . '</a>';
+            } else
+            {   // element is not an array, so it is a single element
+                $output .= '<a class="nav-item nav-link' . $activeClass . '" id="nav-tab-' . $parentTabCount . '-' . $tabCount . '" data-toggle="tab" href="#nav-tab-content-' . $parentTabCount . '-' . $tabCount . '" role="tab" aria-controls="nav-tab-' . $parentTabCount . '-' . $tabCount . '" aria-selected="false">' . $element . '</a>';
+            }
+            // increment tab counter
+            $tabCount++;
+        }
+        // close navigation tab markup
+        $output .= '</div></nav><div class="tab-content" id="nav-tabContent">';
+        // reset tab counter
+        $tabCount = 0;
+        // reset first tab active flag, will be used to set the first tab content pane to active
+        $firstTabActive = true;
+        // loop through all tab elements
+        foreach ($tabElements as $key => $element)
+        {   // init active class
+            $activeClass = '';
+            // check if first content pane is active
+            if ($firstTabActive)
+            {   // set active class
+                $activeClass = ' show active';
+                $firstTabActive = false;
+            }
+            // check if element is an array
+            if (is_array($element))
+            {   // element is an array, so it contains sub elements, display content pane sub elements
+                $output .= '<div class="tab-pane fade' . $activeClass . '" id="nav-tab-content-' . $parentTabCount . '-' . $tabCount . '" role="tabpanel" aria-labelledby="nav-tab-' . $parentTabCount . '-' . $tabCount . '">';
+                $output .= $this->generateNavigation($element, $parentTabCount . '-' . $tabCount);
+                $output .= '</div>';
+                $output .= '<div id="nav-tab-content-box-content-' . $parentTabCount . '-' . $tabCount . '"></div>';
+            }
+            else
+            {   // element is not an array, so it is a single element, display content pane single element
+                $output .= '<div class="tab-pane fade' . $activeClass . '" id="nav-tab-content-' . $parentTabCount . '-' . $tabCount . '" role="tabpanel" aria-labelledby="nav-tab-' . $parentTabCount . '-' . $tabCount . '">';
+                $output .= '<p>Content for ' . $element . '</p></div>';
+                $output .= '<div id="nav-tab-content-box-content-' . $parentTabCount . '-' . $tabCount . '"></div>';
+            }
+            // increment tab counter
+            $tabCount++;
+        }
+        // close content pane markup
+        $output .= '</div>';
+        // return generated markup
+        return $output;
+    }
+
+    // display navigation is a wrapper function for generateNavigation to echo the generated markup
+    public function displayNavigation($tabElements, $grouped): void
+    {   // check if properties is an array
+        if (!is_array($tabElements) || (empty($tabElements)))
+        {   // not an array or empty, so return
+            return; // no properties to display
+        }
+        // check if output should be grouped
+        if (isset($grouped) && $grouped == 'true')
+        {   // display grouped navigation
+            echo $this->generateGroupedNavigation($tabElements);
+            return;
+        }
+        // generate and output the navigation markup
+        echo $this->generateNavigation($tabElements);
+    }
+
+    // generate html markup for grouped css properties
+    function generateGroupedNavigation($tabElements, $parentTabCount = 0): string
+    {
+        $groupedArray = $this->groupData($tabElements);
+
+        $output = '<nav><div class="nav nav-tabs" id="nav-tab" role="tablist">';
+        $tabCount = 0;
+        $firstTabActive = true;
+        foreach ($groupedArray as $key => $element) {
+            $activeClass = '';
+            if ($firstTabActive) {
+                $activeClass = ' active';
+                $firstTabActive = false;
+            }
+            $output .= '<a class="nav-item nav-link' . $activeClass . '" id="nav-tab-' . $parentTabCount . '-' . $tabCount . '" data-toggle="tab" href="#nav-tab-content-' . $parentTabCount . '-' . $tabCount . '" role="tab" aria-controls="nav-tab-' . $parentTabCount . '-' . $tabCount . '" aria-selected="false">' . $key . '</a>';
+            $tabCount++;
+        }
+        $output .= '</div></nav><div class="tab-content" id="nav-tabContent">';
+        $tabCount = 0;
+        $firstTabActive = true;
+        foreach ($groupedArray as $key => $element) {
+            $activeClass = '';
+            if ($firstTabActive) {
+                $activeClass = ' show active';
+                $firstTabActive = false;
+            }
+            $output .= '<div class="tab-pane fade' . $activeClass . '" id="nav-tab-content-' . $parentTabCount . '-' . $tabCount . '" role="tabpanel" aria-labelledby="nav-tab-' . $parentTabCount . '-' . $tabCount . '">';
+            $output .= $this->generateNavigation($element, $parentTabCount . '-' . $tabCount);
+            $output .= '</div>';
+            $tabCount++;
+        }
+        $output .= '</div>';
+        return $output;
+    }
+
+    public function groupData($cssArray): array
+    {
+        $groupedArray = array();
+        foreach ($cssArray as $selector => $properties) {
+//            if (str_starts_with($selector, ".pos-") || str_starts_with($selector, "pos-")) {
+//                continue;
+//            }
+            $group = $this->getGroup($selector);
+            if (!isset($groupedArray[$group])) {
+                $groupedArray[$group] = array();
+            }
+            $groupedArray[$group][$selector] = $properties;
+            foreach ($groupedArray[$group] as $existingSelector => $existingProperties) {
+                if ($selector === $existingSelector) {
+                    continue;
+                }
+                if (str_contains($existingSelector, $selector) || str_contains($selector, $existingSelector)) {
+                    $groupedArray[$group][$existingSelector] = array_merge($groupedArray[$group][$existingSelector], $properties);
+                    unset($groupedArray[$group][$selector]);
+                    break;
+                }
+            }
+        }
+        return $groupedArray;
+    }
+
+    private function getGroup($selector) {
+        $types = [
+            ['selectors' => [['h1'], ['h2'], ['h3'], ['h4'], ['h5'], ['h6'], ['a', 'h1'], ['a', 'h2']], 'category' => 'Fonts'],
+            ['selectors' => [['card'], ['card-header'], ['card-body'], ['card-footer']], 'category' => 'Cards'],
+            ['selectors' => [['btn'], ['.btn'], ['btn-success'], ['btn-primary'], ['btn-warning'], ['btn-danger'], ['btn-info'], ['btn-default']], 'category' => 'Buttons'],
+            ['selectors' => [['pos-'], ['.pos-']], 'category' => 'Positions'],
+            ['selectors' => [['nav-'], ['.nav-'], ['navbar'], ['dropdown'], ['menu']], 'category' => 'Menu'],
+            ['selectors' => [['jumbotron-'], ['.jumbotron-'], ['.jumbotron'], ['jumbotron ']], 'category' => 'Jumbotron'],
+            ['selectors' => [['list-group-'], ['.list-group-']], 'category' => 'ListGroup'],
+            ['selectors' => [['.form-control'], ['form-control'], ['.valid'], ['.error']], 'category' => 'Forms'],
+            ['selectors' => [['body']], 'category' => 'Body'],
+            ['selectors' => [['img-'], ['.img-'], ['img']], 'category' => 'Images']
+        ];
+
+        foreach ($types as $type) {
+            $matches = 0;
+            foreach ($type['selectors'] as $selectorGroup) {
+                $selectorMatch = true;
+                foreach ($selectorGroup as $selectorPart) {
+                    if ($selectorPart !== '' && !str_contains($selector, $selectorPart)) {
+                        $selectorMatch = false;
+                        break;
+                    }
+                }
+                if ($selectorMatch) {
+                    $matches++;
+                } else {
+                    // if any selector in the group does not match, skip the rest of the groups
+                    break;
+                }
+            }
+            if ($matches === count($type['selectors'])) {
+                return $type['category'];
+            }
+        }
+        return 'Other';
+    }
+
+    public function getArrayData($array, $key, $subkey = null): array
+    {
+        $result = array();
+        foreach ($array as $k => $v) {
+            if ($k == $key) {
+                if ($subkey) {
+                    if (isset($v[$subkey])) {
+                        $result[] = $v[$subkey];
+                    }
+                } else {
+                    $result[] = $v;
+                }
+            }
+            if (is_array($v)) {
+                $result = array_merge($result, $this->getArrayData($v, $key, $subkey));
+            }
+        }
+        return $result;
+    }
+
+    public function generateFields($properties, $key, $subkey)
     {
         // build form fields for each css property
         echo '<form id="css-update-form" method="POST">';
+//        if (!empty($this->filename)) {
+//            echo '<p>processed: ' . $this->filename . '</p>';
+//        } else {
+//            return; // exit function
+//        }
+        if (!empty($key)) {
+            return $this->getArrayData($properties, $key, $subkey);
+        }
+        else {
+            return;
+        }
+    }
+
+
+    public function generateCssUpdateForm($properties): void
+    {
+        echo "<h1>Update CSS</h1>";
+        // build form fields for each css property
+        echo '<form id="css-update-form" method="POST">
+                <button type="submit" class="btn-primary">Save</button>';
         if(!empty($this->filename)){
             echo '<p>processed: '.$this->filename.'</p>';
         }
         else {
-            return false;
+            return; // exit function
         }
         foreach ($properties as $selector => $data){
             if (is_array($data)){
@@ -147,7 +376,6 @@ class changeCSSApp
             }
         }
         echo '<input type="hidden" name="filename" value="'.$this->filename.'">
-        <button type="submit">Save</button>
         </form>';
 
     }
