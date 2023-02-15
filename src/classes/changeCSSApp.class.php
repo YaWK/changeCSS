@@ -6,6 +6,7 @@ use Sabberworm\CSS\CSSList\CSSList;
 use Sabberworm\CSS\CSSList\Document;
 use Sabberworm\CSS\Parser;
 use Sabberworm\CSS\Parsing\SourceException;
+use Sabberworm\CSS\RuleSet\DeclarationBlock;
 use Sabberworm\CSS\Value\Color;
 use Sabberworm\CSS\Value\CSSFunction;
 use Sabberworm\CSS\Value\URL;
@@ -14,21 +15,21 @@ use Sabberworm\CSS\Value\URL;
 // contains all methods to parse and edit css files
 class changeCSSApp
 {
-    // properties
-    // filename of css file to parse
-    public string $filename;
+    // class properties
+    public string $filename;                                // file name of css file to be parsed
     // file object
-    public string $file;
+    public string $file;                                    // file (upload) object of css file to be parsed
+    private string $sabberwormPath = '../../assets/lib/';   // path to sabberworm css parser
 
     public function __construct()
     {
         // autoloader to include required parser assets
-        spl_autoload_register(function ($class) {
-        $file = '../../assets/lib/'.str_replace('\\', '/', $class) . '.php';
-        require_once $file;
+        spl_autoload_register(function ($class)
+        {   // Replace backslashes in class name with forward slashes for file path
+            $file = $this->sabberwormPath.str_replace('\\', '/', $class) . '.php';
+            require_once $file;
         });
     }
-
     // parse css file that was uploaded before and return css document object
     public function processFileUploadAndParseCSS(): Document|bool
     {
@@ -38,13 +39,19 @@ class changeCSSApp
             $this->file = $_FILES['css-file']['tmp_name'];
             // Get the file name
             $this->filename = $_FILES['css-file']['name'];
+
             // Create a new instance of the CSS parser and parse the uploaded css file
             $parser = new Parser(file_get_contents($this->file));
-            try {   // parsing succeeded, stored in css document object
+
+            // try to parse css file
+            try
+            {   // parsing succeeded, stored in css document object
                 $cssDocument = $parser->parse();
-            } catch (SourceException $e)
+            }
+            // catch parsing errors
+            catch (SourceException $e)
             {   // parsing failed, exit with error message
-                echo 'There was an error parsing the given CSS file: ' . $this->filename . ' at line ' . $e->getLine() . ': ' . $e->getMessage();
+                echo 'There was an error parsing the given CSS file: ' . isset($this->filename) . ' at line ' . $e->getLine() . ': ' . $e->getMessage();
             }
         }
         // check if document object was created
@@ -56,6 +63,7 @@ class changeCSSApp
         {   // return css document object
             return $cssDocument;
         }
+        // return false if no css document object was created
         return false;
     }
 
@@ -189,162 +197,21 @@ class changeCSSApp
     }
 
     // display navigation is a wrapper function for generateNavigation to echo the generated markup
-    public function displayNavigation($tabElements, $grouped): void
+    public function displayNavigation($tabElements): void
     {   // check if properties is an array
+        print_r($tabElements);
+
         if (!is_array($tabElements) || (empty($tabElements)))
         {   // not an array or empty, so return
             return; // no properties to display
-        }
-        // check if output should be grouped
-        if (isset($grouped) && $grouped == 'true')
-        {   // display grouped navigation
-            echo $this->generateGroupedNavigation($tabElements);
-            return;
         }
         // generate and output the navigation markup
         echo $this->generateNavigation($tabElements);
     }
 
-    // generate html markup for grouped css properties
-    function generateGroupedNavigation($tabElements, $parentTabCount = 0): string
-    {
-        $groupedArray = $this->groupData($tabElements);
-
-        $output = '<nav><div class="nav nav-tabs" id="nav-tab" role="tablist">';
-        $tabCount = 0;
-        $firstTabActive = true;
-        foreach ($groupedArray as $key => $element) {
-            $activeClass = '';
-            if ($firstTabActive) {
-                $activeClass = ' active';
-                $firstTabActive = false;
-            }
-            $output .= '<a class="nav-item nav-link' . $activeClass . '" id="nav-tab-' . $parentTabCount . '-' . $tabCount . '" data-toggle="tab" href="#nav-tab-content-' . $parentTabCount . '-' . $tabCount . '" role="tab" aria-controls="nav-tab-' . $parentTabCount . '-' . $tabCount . '" aria-selected="false">' . $key . '</a>';
-            $tabCount++;
-        }
-        $output .= '</div></nav><div class="tab-content" id="nav-tabContent">';
-        $tabCount = 0;
-        $firstTabActive = true;
-        foreach ($groupedArray as $key => $element) {
-            $activeClass = '';
-            if ($firstTabActive) {
-                $activeClass = ' show active';
-                $firstTabActive = false;
-            }
-            $output .= '<div class="tab-pane fade' . $activeClass . '" id="nav-tab-content-' . $parentTabCount . '-' . $tabCount . '" role="tabpanel" aria-labelledby="nav-tab-' . $parentTabCount . '-' . $tabCount . '">';
-            $output .= $this->generateNavigation($element, $parentTabCount . '-' . $tabCount);
-            $output .= '</div>';
-            $tabCount++;
-        }
-        $output .= '</div>';
-        return $output;
-    }
-
-    public function groupData($cssArray): array
-    {
-        $groupedArray = array();
-        foreach ($cssArray as $selector => $properties) {
-//            if (str_starts_with($selector, ".pos-") || str_starts_with($selector, "pos-")) {
-//                continue;
-//            }
-            $group = $this->getGroup($selector);
-            if (!isset($groupedArray[$group])) {
-                $groupedArray[$group] = array();
-            }
-            $groupedArray[$group][$selector] = $properties;
-            foreach ($groupedArray[$group] as $existingSelector => $existingProperties) {
-                if ($selector === $existingSelector) {
-                    continue;
-                }
-                if (str_contains($existingSelector, $selector) || str_contains($selector, $existingSelector)) {
-                    $groupedArray[$group][$existingSelector] = array_merge($groupedArray[$group][$existingSelector], $properties);
-                    unset($groupedArray[$group][$selector]);
-                    break;
-                }
-            }
-        }
-        return $groupedArray;
-    }
-
-    private function getGroup($selector) {
-        $types = [
-            ['selectors' => [['h1'], ['h2'], ['h3'], ['h4'], ['h5'], ['h6'], ['a', 'h1'], ['a', 'h2']], 'category' => 'Fonts'],
-            ['selectors' => [['card'], ['card-header'], ['card-body'], ['card-footer']], 'category' => 'Cards'],
-            ['selectors' => [['btn'], ['.btn'], ['btn-success'], ['btn-primary'], ['btn-warning'], ['btn-danger'], ['btn-info'], ['btn-default']], 'category' => 'Buttons'],
-            ['selectors' => [['pos-'], ['.pos-']], 'category' => 'Positions'],
-            ['selectors' => [['nav-'], ['.nav-'], ['navbar'], ['dropdown'], ['menu']], 'category' => 'Menu'],
-            ['selectors' => [['jumbotron-'], ['.jumbotron-'], ['.jumbotron'], ['jumbotron ']], 'category' => 'Jumbotron'],
-            ['selectors' => [['list-group-'], ['.list-group-']], 'category' => 'ListGroup'],
-            ['selectors' => [['.form-control'], ['form-control'], ['.valid'], ['.error']], 'category' => 'Forms'],
-            ['selectors' => [['body']], 'category' => 'Body'],
-            ['selectors' => [['img-'], ['.img-'], ['img']], 'category' => 'Images']
-        ];
-
-        foreach ($types as $type) {
-            $matches = 0;
-            foreach ($type['selectors'] as $selectorGroup) {
-                $selectorMatch = true;
-                foreach ($selectorGroup as $selectorPart) {
-                    if ($selectorPart !== '' && !str_contains($selector, $selectorPart)) {
-                        $selectorMatch = false;
-                        break;
-                    }
-                }
-                if ($selectorMatch) {
-                    $matches++;
-                } else {
-                    // if any selector in the group does not match, skip the rest of the groups
-                    break;
-                }
-            }
-            if ($matches === count($type['selectors'])) {
-                return $type['category'];
-            }
-        }
-        return 'Other';
-    }
-
-    public function getArrayData($array, $key, $subkey = null): array
-    {
-        $result = array();
-        foreach ($array as $k => $v) {
-            if ($k == $key) {
-                if ($subkey) {
-                    if (isset($v[$subkey])) {
-                        $result[] = $v[$subkey];
-                    }
-                } else {
-                    $result[] = $v;
-                }
-            }
-            if (is_array($v)) {
-                $result = array_merge($result, $this->getArrayData($v, $key, $subkey));
-            }
-        }
-        return $result;
-    }
-
-    public function generateFields($properties, $key, $subkey)
-    {
-        // build form fields for each css property
-        echo '<form id="css-update-form" method="POST">';
-//        if (!empty($this->filename)) {
-//            echo '<p>processed: ' . $this->filename . '</p>';
-//        } else {
-//            return; // exit function
-//        }
-        if (!empty($key)) {
-            return $this->getArrayData($properties, $key, $subkey);
-        }
-        else {
-            return;
-        }
-    }
-
-
+    // generate html markup for css properties
     public function generateCssUpdateForm($properties): void
     {
-        echo "<h1>Update CSS</h1>";
         // build form fields for each css property
         echo '<form id="css-update-form" method="POST">
                 <button type="submit" class="btn-primary">Save</button>';
@@ -377,7 +244,182 @@ class changeCSSApp
         }
         echo '<input type="hidden" name="filename" value="'.$this->filename.'">
         </form>';
-
     }
 
+    public function filterMenuItems($document): array
+    {
+        // Extract the selectors, properties, and values from the document
+        $rules = array_filter($document->getAllRuleSets(), function($ruleSet) {
+            return count($ruleSet->getRules()) > 0;
+        });
+
+
+        $cssArray = array_map(function($ruleSet)
+        {
+            if ($ruleSet instanceof DeclarationBlock)
+            {
+                $selectors = array_map(function($selector) {
+                    return $selector->getSelector();
+                }, $ruleSet->getSelectors());
+
+                $properties = array_map(function($property) {
+                    // Get the name and value of the property
+                    $propertyName = $property->getRule();
+                    $propertyValue = $property->getValue();
+
+                    // Check if the value is a color and convert it to a hex code
+                    if ($propertyValue instanceof Sabberworm\CSS\Value\Color) {
+                        // Get the color value as a string
+                        $colorValue = (string) $propertyValue;
+
+                        // Parse the string to extract the hex code
+                        if (preg_match('/^#(?:[0-9a-fA-F]{3}){1,2}$/', $colorValue)) {
+                            // The color value is already a hex code
+                            $hexCode = $colorValue;
+                        } elseif (preg_match('/^rgb\((\d+), (\d+), (\d+)\)$/', $colorValue, $matches)) {
+                            // The color value is an RGB value
+                            $r = dechex($matches[1]);
+                            $g = dechex($matches[2]);
+                            $b = dechex($matches[3]);
+                            $hexCode = sprintf("#%02s%02s%02s", $r, $g, $b);
+                        } else {
+                            // The color value is not a recognized format
+                            $hexCode = '';
+                        }
+
+                        // Set the property value to the hex code
+                        $propertyValue = $hexCode;
+                    }
+                    // extract size values
+                    elseif ($propertyValue instanceof Sabberworm\CSS\Value\Size) {
+                        // Get the size value as a string
+                        $propertyValue = (string)$propertyValue;
+
+                        // Parse the string to extract the size value
+                        if (preg_match('/^(-?[0-9\.]+)(px|em|rem|ex|ch|vw|vh|vmin|vmax|%|)$/', $propertyValue, $matches)) {
+                            // The size value is in a recognized format
+                            $size = $matches[1].$matches[2];
+                        } else {
+                            // The size value is not a recognized format
+                            $size = $propertyValue;
+                        }
+                        $propertyValue = $size;
+                    }
+
+                    return [
+                        'name' => $propertyName,
+                        'value' => $propertyValue,
+                    ];
+                }, $ruleSet->getRules());
+
+                return [
+                    'selector' => implode(', ', $selectors),
+                    'properties' => $properties,
+                ];
+            }
+            return;
+        }, $rules);
+
+
+// Define an array of selectors and their corresponding categories
+// Loop over the categories and search for matching selectors
+        $menuItems = array();
+// Define the mapping array
+        $mapping = [
+            'Fonts' => [
+                'Default' => ['.h1', '.h2', '.h3', '.h4', '.h5', '.h6', 'p', 'a', 'li', 'span', 'label', 'input', 'textarea', 'button', 'select', 'option', 'optgroup', 'legend', 'caption', 'small', 'strong', 'b', 'i', 'em', 'u', 's', 'del', 'ins', 'sub', 'sup', 'pre', 'code', 'kbd', 'samp', 'var', 'mark', 'abbr', 'dfn', 'cite', 'q', 'blockquote', 'hr', 'address', 'time', 'img', 'figure', 'figcaption', 'svg', 'path', 'g', 'rect', 'circle', 'ellipse', 'line', 'polyline', 'polygon', 'text', 'tspan', 'textPath', 'linearGradient', 'radialGradient', 'stop', 'defs', 'use', 'symbol', 'clipPath', 'mask', 'pattern', 'filter', 'foreignObject', 'iframe', 'embed', 'object', 'video', 'audio', 'source', 'track', 'canvas', 'map', 'area', 'table', 'th', 'td', 'thead', 'tbody', 'tfoot', 'tr', 'col', 'colgroup', 'caption', 'fieldset', 'form', 'label', 'input', 'button', 'select', 'datalist', 'optgroup', 'option', 'textarea', 'keygen', 'output', 'progress', 'meter', 'details', 'summary', 'menuitem', 'menu', 'dialog', 'script', 'noscript', 'del', 'ins', 'style', 'title', 'base', 'link', 'meta', 'head', 'body', 'html', 'div', 'span', 'p', 'a', 'ul', 'ol', 'li', 'dl', 'dt', 'dd', 'blockquote', 'q', 'pre', 'code', 'figure', 'figcaption', 'img', 'iframe', 'embed', 'object', 'video', 'audio', 'canvas', 'svg', 'math', 'table', 'caption', 'colgroup', 'col', 'tbody', 'thead', 'tfoot', 'tr', 'td', 'th', 'form', 'fieldset', 'legend', 'label'],
+            ],
+            'Navigation' => [
+                'Default' => ['.nav'],
+                'Navbar' => ['.navbar'],
+                'Nav Tabs' => ['.nav-tabs'],
+                'Nav Pills' => ['.nav-pills'],
+            ],
+            'Buttons' => [
+                'Default' => ['.btn'],
+                'Primary' => ['.btn-primary'],
+                'Secondary' => ['.btn-secondary'],
+                'Info' => ['.btn-info'],
+                'Dark' => ['.btn-dark'],
+                'Light' => ['.btn-light'],
+                'Success' => ['.btn-success'],
+                'Warning' => ['.btn-warning'],
+                'Danger' => ['.btn-danger'],
+            ],
+            'Table' => [
+                'Default' => ['.table'],
+                'Dark' => ['.table-dark'],
+                'Hover' => ['.table-hover'],
+                'Responsive' => ['.table-responsive'],
+            ],
+            'Forms' => [
+                'Default' => ['.form-control'],
+                'Form Check' => ['.form-check'],
+                'Form Inline' => ['.form-inline'],
+                'Form Group' => ['.form-group'],
+                'Validated' => ['.was-validated'],
+                'Input Group' => ['.input-group'],
+                'Checkbox' => ['.custom-checkbox'],
+                'Radio' => ['.custom-radio'],
+                'Select' => ['.custom-select'],
+                'File' => ['.custom-file'],
+                'Range' => ['.custom-range'],
+            ],
+            'Carousel' => [
+                'Default' => ['.carousel'],
+                'Item' => ['.carousel-item'],
+                'Fade' => ['.carousel-fade'],
+                'Control' => ['.carousel-control'],
+                'Indicators' => ['.carousel-indicators'],
+            ],
+            'Alert' => [
+                'Default' => ['.alert'],
+                'Primary' => ['.alert-primary'],
+                'Secondary' => ['.alert-secondary'],
+                'Info' => ['.alert-info'],
+                'Success' => ['.alert-success'],
+                'Warning' => ['.alert-warning'],
+                'Danger' => ['.alert-danger'],
+            ],
+            'List Group' => [
+                'Default' => ['.list-group'],
+                'Item' => ['.list-group-item'],
+            ],
+            'Modal' => [
+                'Default' => ['.modal'],
+                'Dialog' => ['.modal-dialog'],
+                'Backdrop' => ['.modal-backdrop'],
+                'Header' => ['.modal-header'],
+                'Body' => ['.modal-body'],
+                'Footer' => ['.modal-footer'],
+            ],
+        ];
+        $cssSelectors = array();
+        // Loop through the rules to extract the selectors that match the mapping
+        $i = 0;
+        foreach ($cssArray as $item) {
+
+            if (isset($item['selector']) && (!empty($item['selector'])))
+                $selector = $item['selector'];
+            else
+                continue;
+
+            if ($i == 0) {
+                $cssSelectors['selector'][] = $selector;
+            } else {
+                $cssSelectors['selector'][] .= ',' . $selector;
+            }
+            foreach ($mapping as $category => $items) {
+                foreach ($items as $itemName => $itemSelectors) {
+                    if (in_array($selector, $itemSelectors)) {
+                        $menuItems[$category][$itemName] = $selector;
+                    }
+                }
+            }
+            $i++;
+        }
+        // on update : return $cssSelectors; //  a list of the selectors
+        // default: return the menu items
+        return $menuItems;
+    }
 }
