@@ -9,6 +9,7 @@ use Sabberworm\CSS\Parsing\SourceException;
 use Sabberworm\CSS\RuleSet\DeclarationBlock;
 use Sabberworm\CSS\Value\Color;
 use Sabberworm\CSS\Value\CSSFunction;
+use Sabberworm\CSS\Value\Size;
 use Sabberworm\CSS\Value\URL;
 
 // changeCSSApp class
@@ -132,13 +133,14 @@ class changeCSSApp
 
     // generate html markup for css properties
     function generateNavigation($tabElements, $parentTabCount = 0): string
-    {   // create navigation tab markup
+    {   // NAVIGATION TABS
+        // create navigation tab html markup
         $output = '<nav><div class="nav nav-tabs" id="nav-tab" role="tablist">';
         // init tab counter
         $tabCount = 0;
         // init first tab active flag as boolean
         $firstTabActive = true;
-        // loop through all tab elements
+        // loop through all tab elements (draw navigation tabs)
         foreach ($tabElements as $key => $element) {
             // init active class
             $activeClass = '';
@@ -148,7 +150,7 @@ class changeCSSApp
                 $activeClass = ' active';
                 $firstTabActive = false;
             }
-            // check if element is an array
+            // check if element is an array (contains sub elements)
             if (is_array($element))
             {   // element is an array, so it contains sub elements
                 $output .= '<a class="nav-item nav-link' . $activeClass . '" id="nav-tab-' . $parentTabCount . '-' . $tabCount . '" data-toggle="tab" href="#nav-tab-content-' . $parentTabCount . '-' . $tabCount . '" role="tab" aria-controls="nav-tab-' . $parentTabCount . '-' . $tabCount . '" aria-selected="false">' . $key . '</a>';
@@ -160,7 +162,11 @@ class changeCSSApp
             $tabCount++;
         }
         // close navigation tab markup
-        $output .= '</div></nav><div class="tab-content" id="nav-tabContent">';
+        $output .= '</div></nav>';
+
+        // CONTENT PANES
+        // create content pane html markup
+        $output .='<div class="tab-content" id="nav-tabContent">';
         // reset tab counter
         $tabCount = 0;
         // reset first tab active flag, will be used to set the first tab content pane to active
@@ -186,7 +192,7 @@ class changeCSSApp
             else
             {   // element is not an array, so it is a single element, display content pane single element
                 $output .= '<div class="tab-pane fade' . $activeClass . '" id="nav-tab-content-' . $parentTabCount . '-' . $tabCount . '" role="tabpanel" aria-labelledby="nav-tab-' . $parentTabCount . '-' . $tabCount . '">';
-                $output .= '<p>Content for ' . $element . '</p></div>';
+                $output .= '<p>Load css elements of selector for property: <b>' . $element . '</b></p></div>';
                 $output .= '<div id="nav-tab-content-box-content-' . $parentTabCount . '-' . $tabCount . '"></div>';
             }
             // increment tab counter
@@ -201,17 +207,17 @@ class changeCSSApp
     // display navigation is a wrapper function for generateNavigation to echo the generated markup
     public function displayNavigation($tabElements): void
     {   // check if properties is an array
-        echo "<pre>";
-        print_r($tabElements);
-        echo "</pre>";
-
-
         if (!is_array($tabElements) || (empty($tabElements)))
         {   // not an array or empty, so return
             return; // no properties to display
         }
         // generate and output the navigation markup
         echo $this->generateNavigation($tabElements);
+
+        // for debugging purposes: uncomment the following lines to display the $tabElements array
+        // echo "<pre>";
+        // print_r($tabElements);
+        // echo "</pre>";
     }
 
     // generate html markup for css properties
@@ -255,7 +261,7 @@ class changeCSSApp
     // public function displayCssUpdateForm($properties): void
 
     // public function filterMenuItems($document) is a function to filter the css selectors and get menu items from it
-    public function filterMenuItems($document): array
+    public function filterMenuItems($document, $returnMenuItems = true, $returnSelectorList = false): array
     {
         // Extract the selectors, properties, and values from the document
         $rules = array_filter($document->getAllRuleSets(), function($ruleSet) {
@@ -311,7 +317,7 @@ class changeCSSApp
                     }
 
                     // extract size values to shrink the array
-                    elseif ($propertyValue instanceof Sabberworm\CSS\Value\Size) {
+                    elseif ($propertyValue instanceof Size) {
 
                         // Get the size value as a string
                         $propertyValue = (string)$propertyValue;
@@ -415,9 +421,14 @@ class changeCSSApp
                 'Body' => ['.modal-body'],
                 'Footer' => ['.modal-footer'],
             ],
+            'Positions' => [
+                'Default' => ['.pos-'],
+                'Footer' => ['.pos-footer'],
+            ],
         ];
         // Define the array of selectors
         $cssSelectors = array();
+        $cssSelectorList = array();
         // initialize the loop counter, will be used to add the comma
         $i = 0;
         // Loop through the rules to extract the selectors that match the mapping
@@ -431,8 +442,10 @@ class changeCSSApp
             // Check if the selector is in the mapping
             if ($i == 0) {
                 $cssSelectors['selector'][] = $selector;
+                $cssSelectorList[] = $selector;
             } else {
                 $cssSelectors['selector'][] .= ',' . $selector;
+                $cssSelectorList[] .= $selector;
             }
 
             // Loop through the mapping to find the matching selectors
@@ -448,8 +461,35 @@ class changeCSSApp
             }
             $i++;
         }
-        // on update : return $cssSelectors; //  a list of the selectors
-        // default: return the menu items
-        return $menuItems;
+
+        // return the menu items or the css selectors, depending on the parameter passed to the function
+        if ($returnMenuItems === true)
+        {   // return the menu items (default behavior)
+            return $menuItems;
+        }
+        // return the css selectors (print_r to help debugging xor extending the mapping)
+        else if ($returnSelectorList === true)
+        {   // return the css selectors to be displayed as a list (to help debugging xor extending the mapping)
+            return $cssSelectorList;
+        }
+        else {
+            // invalid parameter passed to the function (should never happen)
+            die("Error: Invalid parameter passed to filterMenuItems() it requires 3 parameters. param 2 + 3 cannot be true or false at the same time. \$document[array], \$returnMenuItems = true, \$returnSelectorList = false");
+        }
+    }
+
+    public function getSelectorList($document) : void
+    {
+        $selectorList = array();
+        // return the css selectors (print_r to help debugging xor extending the mapping)
+        $selectorList = $this->filterMenuItems($document, false, true);
+        echo '<div class="text-left">';
+        $i = 0;
+        foreach ($selectorList as $selector)
+        {   //
+            echo '<p>'.$i.' : '.$selector.'</p>';
+            $i++;
+        }
+        echo '</div>';
     }
 }
