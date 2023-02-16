@@ -26,9 +26,10 @@ $(document).ready(function() {
                 // insert the xhr response into the css editor
                 $('#css-editor').html(response).fadeIn(800);
                 // because of xhr we need to select all fields with jscolor data attribute
-                document.querySelector(`[data-jscolor]`).innerHTML += '<input data-jscolor="{}">';
-                // install jscolor on the new inputs
-                jscolor.install() // recognizes new inputs and installs jscolor on them
+                if(document.querySelector(`[data-jscolor]`)){
+                    document.querySelector(`[data-jscolor]`).innerHTML += '<input data-jscolor="{}">';
+                    jscolor.install() // recognizes new inputs and installs jscolor on them
+                }
             },
             // If the request fails, display an error message
             error: function(xhr, status, error)
@@ -81,34 +82,48 @@ $(document).ready(function() {
         });
     });
 
-    // Handle update form submission (work in progress!)
-    var requestInProgress = false;
-    $(document).on('click', '.nav-item.nav-link', function(e) {
-        e.preventDefault();
-        var tabId = $(this).attr('href');
-        var group = $(this).text();
-//        var contentPane = tabId.replace('nav-tab-content-', 'nav-tab-content-box-content-');
-
-        $(tabId).html('<p>Loading... <b>'+group+'</b></p>'); // Loading indicator
-
-        document.querySelector(`[data-jscolor]`).innerHTML += '<input data-jscolor="{}">';
-        jscolor.install() // recognizes new inputs and installs jscolor on them
-
-        $.ajax({
-            url: 'src/classes/tab.php',
-            data: { tabId: tabId, group: group, action: 'getCSSNode' },
-            success: function (response) {
-                // $(tabId).html(response);
-                requestInProgress = false;
-
-            },
-            error: function (xhr, status, error) {
-                alert("Error: " + error);
-                requestInProgress = false;
-            }
+    $(document).ready(function() {
+        $(document).on('click', '.nav-item .nav-link', function(e) {
+            console.log('click event triggered');
+            var tabId = $(this).attr('href');
+            var group = $(this).text();
+            console.log("clicked: " + tabId + " " + group);
+            var contentPane = tabId.replace('nav-tab-content-', 'nav-tab-content-box-content-');
+            $(tabId).html('<p>Loading... <b>'+group+'</b></p>'); // Loading indicator
         });
-
     });
+
+
+    // // Handle update form submission (work in progress!)
+    // var requestInProgress = false;
+    // $(document).on('click', 'nav-item nav-link', function(e) {
+    //     console.log("Clicked");
+    //    // e.preventDefault();
+    //     var tabId = $(this).attr('href');
+    //     var group = $(this).text();
+    //     alert("clicked: " + tabId + " " + group);
+    //     var contentPane = tabId.replace('nav-tab-content-', 'nav-tab-content-box-content-');
+    //
+    //     $(tabId).html('<p>Loading... <b>'+group+'</b></p>'); // Loading indicator
+    //
+    //     // document.querySelector(`[data-jscolor]`).innerHTML += '<input data-jscolor="{}">';
+    //     // jscolor.install() // recognizes new inputs and installs jscolor on them
+    //     //
+    //     // $.ajax({
+    //     //     url: 'src/classes/tab.php',
+    //     //     data: { tabId: tabId, group: group, action: 'getCSSNode' },
+    //     //     success: function (response) {
+    //     //         // $(tabId).html(response);
+    //     //         requestInProgress = false;
+    //     //
+    //     //     },
+    //     //     error: function (xhr, status, error) {
+    //     //         alert("Error: " + error);
+    //     //         requestInProgress = false;
+    //     //     }
+    //     // });
+    //
+    // });
 
 
 
