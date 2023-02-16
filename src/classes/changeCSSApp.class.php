@@ -246,6 +246,10 @@ class changeCSSApp
         </form>';
     }
 
+    // display css properties is a wrapper function for generateCssUpdateForm to echo the generated markup
+    // public function displayCssUpdateForm($properties): void
+
+    // public function filterMenuItems($document) is a function to filter the css selectors and get menu items from it
     public function filterMenuItems($document): array
     {
         // Extract the selectors, properties, and values from the document
@@ -253,16 +257,18 @@ class changeCSSApp
             return count($ruleSet->getRules()) > 0;
         });
 
-
+        // init menu items array
         $cssArray = array_map(function($ruleSet)
-        {
+        {   // check if ruleSet is an instance of DeclarationBlock
             if ($ruleSet instanceof DeclarationBlock)
-            {
+            {   // get the selectors
                 $selectors = array_map(function($selector) {
                     return $selector->getSelector();
                 }, $ruleSet->getSelectors());
 
-                $properties = array_map(function($property) {
+                // get the properties and values for each selector
+                $properties = array_map(function($property)
+                {
                     // Get the name and value of the property
                     $propertyName = $property->getRule();
                     $propertyValue = $property->getValue();
@@ -273,25 +279,35 @@ class changeCSSApp
                         $colorValue = (string) $propertyValue;
 
                         // Parse the string to extract the hex code
-                        if (preg_match('/^#(?:[0-9a-fA-F]{3}){1,2}$/', $colorValue)) {
-                            // The color value is already a hex code
+                        if (preg_match('/^#(?:[0-9a-fA-F]{3}){1,2}$/', $colorValue))
+                        {   // The color value is already a hex code
                             $hexCode = $colorValue;
-                        } elseif (preg_match('/^rgb\((\d+), (\d+), (\d+)\)$/', $colorValue, $matches)) {
+                        }
+                        // check if color value is rgb (which is default for sabberworm parsed css)
+                        elseif (preg_match('/^rgb\((\d+), (\d+), (\d+)\)$/', $colorValue, $matches))
+                        {
                             // The color value is an RGB value
                             $r = dechex($matches[1]);
                             $g = dechex($matches[2]);
                             $b = dechex($matches[3]);
+
+                            // Convert the RGB value to a hex code
                             $hexCode = sprintf("#%02s%02s%02s", $r, $g, $b);
-                        } else {
-                            // The color value is not a recognized format
+                        }
+                        else
+                        {   // The color value is not a recognized format
                             $hexCode = '';
+                            // set rgb as value
+                            $hexCode = $propertyValue;
                         }
 
                         // Set the property value to the hex code
                         $propertyValue = $hexCode;
                     }
-                    // extract size values
+
+                    // extract size values to shrink the array
                     elseif ($propertyValue instanceof Sabberworm\CSS\Value\Size) {
+
                         // Get the size value as a string
                         $propertyValue = (string)$propertyValue;
 
@@ -317,14 +333,15 @@ class changeCSSApp
                     'properties' => $properties,
                 ];
             }
+
             return;
         }, $rules);
 
 
-// Define an array of selectors and their corresponding categories
-// Loop over the categories and search for matching selectors
+        // Define an array of selectors and their corresponding categories
+        // Loop over the categories and search for matching selectors
         $menuItems = array();
-// Define the mapping array
+        // Define the mapping array
         $mapping = [
             'Fonts' => [
                 'Default' => ['.h1', '.h2', '.h3', '.h4', '.h5', '.h6', 'p', 'a', 'li', 'span', 'label', 'input', 'textarea', 'button', 'select', 'option', 'optgroup', 'legend', 'caption', 'small', 'strong', 'b', 'i', 'em', 'u', 's', 'del', 'ins', 'sub', 'sup', 'pre', 'code', 'kbd', 'samp', 'var', 'mark', 'abbr', 'dfn', 'cite', 'q', 'blockquote', 'hr', 'address', 'time', 'img', 'figure', 'figcaption', 'svg', 'path', 'g', 'rect', 'circle', 'ellipse', 'line', 'polyline', 'polygon', 'text', 'tspan', 'textPath', 'linearGradient', 'radialGradient', 'stop', 'defs', 'use', 'symbol', 'clipPath', 'mask', 'pattern', 'filter', 'foreignObject', 'iframe', 'embed', 'object', 'video', 'audio', 'source', 'track', 'canvas', 'map', 'area', 'table', 'th', 'td', 'thead', 'tbody', 'tfoot', 'tr', 'col', 'colgroup', 'caption', 'fieldset', 'form', 'label', 'input', 'button', 'select', 'datalist', 'optgroup', 'option', 'textarea', 'keygen', 'output', 'progress', 'meter', 'details', 'summary', 'menuitem', 'menu', 'dialog', 'script', 'noscript', 'del', 'ins', 'style', 'title', 'base', 'link', 'meta', 'head', 'body', 'html', 'div', 'span', 'p', 'a', 'ul', 'ol', 'li', 'dl', 'dt', 'dd', 'blockquote', 'q', 'pre', 'code', 'figure', 'figcaption', 'img', 'iframe', 'embed', 'object', 'video', 'audio', 'canvas', 'svg', 'math', 'table', 'caption', 'colgroup', 'col', 'tbody', 'thead', 'tfoot', 'tr', 'td', 'th', 'form', 'fieldset', 'legend', 'label'],
@@ -394,24 +411,32 @@ class changeCSSApp
                 'Footer' => ['.modal-footer'],
             ],
         ];
+        // Define the array of selectors
         $cssSelectors = array();
-        // Loop through the rules to extract the selectors that match the mapping
+        // initialize the loop counter, will be used to add the comma
         $i = 0;
+        // Loop through the rules to extract the selectors that match the mapping
         foreach ($cssArray as $item) {
-
+            // Check if the selector is set
             if (isset($item['selector']) && (!empty($item['selector'])))
                 $selector = $item['selector'];
             else
                 continue;
 
+            // Check if the selector is in the mapping
             if ($i == 0) {
                 $cssSelectors['selector'][] = $selector;
             } else {
                 $cssSelectors['selector'][] .= ',' . $selector;
             }
-            foreach ($mapping as $category => $items) {
-                foreach ($items as $itemName => $itemSelectors) {
-                    if (in_array($selector, $itemSelectors)) {
+
+            // Loop through the mapping to find the matching selectors
+            foreach ($mapping as $category => $items)
+            {   // Loop through the items in the category
+                foreach ($items as $itemName => $itemSelectors)
+                {   // Check if the selector is in the item selectors
+                    if (in_array($selector, $itemSelectors))
+                    {   // Add the selector to the menu items
                         $menuItems[$category][$itemName] = $selector;
                     }
                 }
