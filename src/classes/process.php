@@ -16,11 +16,14 @@ $cssDocument = $app->processFileUploadAndParseCSS();
 // get all css properties into array
 $properties = $app->getProperties($cssDocument);
 // get filtered array of menu items
-$menuItems = $app->filterMenuItems($cssDocument);
+$menuItems = $app->filterMenuItems($cssDocument, true, false);
 // load dynamic menu built from css file
-$app->displayNavigation($menuItems, false);
+$app->displayNavigation($menuItems);
+
+// $selectorList = $app->getSelectorList($cssDocument);
+
 // generate form
-$app->generateCssUpdateForm($properties);
+// $app->generateCssUpdateForm($properties);
 
 // debug purpose: print css array
 // $app->testing();
