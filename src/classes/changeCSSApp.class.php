@@ -15,11 +15,12 @@ use Sabberworm\CSS\Value\URL;
 // contains all methods to parse and edit css files
 class changeCSSApp
 {
-    // class properties
-    public string $filename;                                // file name of css file to be parsed
-    // file object
-    public string $file;                                    // file (upload) object of css file to be parsed
-    private string $sabberwormPath = '../../assets/lib/';   // path to sabberworm css parser
+    // file name of css file to be parsed
+    public string $filename;
+    // file (upload) object of css file to be parsed
+    public string $file;
+    // path to sabberworm css parser
+    private string $sabberwormPath = '../../assets/lib/';
 
     public function __construct()
     {
@@ -30,6 +31,7 @@ class changeCSSApp
             require_once $file;
         });
     }
+
     // parse css file that was uploaded before and return css document object
     public function processFileUploadAndParseCSS(): Document|bool
     {
@@ -277,7 +279,7 @@ class changeCSSApp
                     $propertyValue = $property->getValue();
 
                     // Check if the value is a color and convert it to a hex code
-                    if ($propertyValue instanceof Sabberworm\CSS\Value\Color) {
+                    if ($propertyValue instanceof Color) {
                         // Get the color value as a string
                         $colorValue = (string) $propertyValue;
 
