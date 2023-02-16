@@ -199,7 +199,10 @@ class changeCSSApp
     // display navigation is a wrapper function for generateNavigation to echo the generated markup
     public function displayNavigation($tabElements): void
     {   // check if properties is an array
+        echo "<pre>";
         print_r($tabElements);
+        echo "</pre>";
+
 
         if (!is_array($tabElements) || (empty($tabElements)))
         {   // not an array or empty, so return
@@ -344,7 +347,7 @@ class changeCSSApp
         // Define the mapping array
         $mapping = [
             'Fonts' => [
-                'Default' => ['.h1', '.h2', '.h3', '.h4', '.h5', '.h6', 'p', 'a', 'li', 'span', 'label', 'input', 'textarea', 'button', 'select', 'option', 'optgroup', 'legend', 'caption', 'small', 'strong', 'b', 'i', 'em', 'u', 's', 'del', 'ins', 'sub', 'sup', 'pre', 'code', 'kbd', 'samp', 'var', 'mark', 'abbr', 'dfn', 'cite', 'q', 'blockquote', 'hr', 'address', 'time', 'img', 'figure', 'figcaption', 'svg', 'path', 'g', 'rect', 'circle', 'ellipse', 'line', 'polyline', 'polygon', 'text', 'tspan', 'textPath', 'linearGradient', 'radialGradient', 'stop', 'defs', 'use', 'symbol', 'clipPath', 'mask', 'pattern', 'filter', 'foreignObject', 'iframe', 'embed', 'object', 'video', 'audio', 'source', 'track', 'canvas', 'map', 'area', 'table', 'th', 'td', 'thead', 'tbody', 'tfoot', 'tr', 'col', 'colgroup', 'caption', 'fieldset', 'form', 'label', 'input', 'button', 'select', 'datalist', 'optgroup', 'option', 'textarea', 'keygen', 'output', 'progress', 'meter', 'details', 'summary', 'menuitem', 'menu', 'dialog', 'script', 'noscript', 'del', 'ins', 'style', 'title', 'base', 'link', 'meta', 'head', 'body', 'html', 'div', 'span', 'p', 'a', 'ul', 'ol', 'li', 'dl', 'dt', 'dd', 'blockquote', 'q', 'pre', 'code', 'figure', 'figcaption', 'img', 'iframe', 'embed', 'object', 'video', 'audio', 'canvas', 'svg', 'math', 'table', 'caption', 'colgroup', 'col', 'tbody', 'thead', 'tfoot', 'tr', 'td', 'th', 'form', 'fieldset', 'legend', 'label'],
+                'Default' => ['.h1', '.h2', '.h3', '.h4', '.h5', '.h6', 'p', 'a'],
             ],
             'Navigation' => [
                 'Default' => ['.nav'],
