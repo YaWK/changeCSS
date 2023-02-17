@@ -25,3 +25,26 @@
     width: 100%;
     height: 4px;
 }
+
+
+.slideDown {
+    position: relative;
+    visibility: hidden;
+    animation: slideDown 0.8s forwards;
+}
+.slideDownFast {
+    animation-delay: 1.8s;
+    position: relative;
+    visibility: hidden;
+    animation: slideDown 1.1s forwards;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+        visibility: visible;
+    }
+    to {
+        transform: translateY(0);
+    }
+}
