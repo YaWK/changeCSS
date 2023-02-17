@@ -95,6 +95,15 @@ $(document).ready(function (keyframes, options) {
         $('#navbar').css('visibility', 'visible');
     });
 
+    $(document).ready(function() {
+        // store savebutton in var
+        var savebutton = ('#uploadBtn');
+        // check if user clicked on save button
+        $(savebutton).click(function() {
+            $(savebutton).removeClass('btn btn-success').html('<i class="fa fa-spinner fa-spin fa-fw"></i> Loading... <small>please wait</small>').addClass('btn btn-danger disabled');
+        });
+    });
+
     //
     // $(document).ready(function() {
     //     animateObjects();
