@@ -192,7 +192,7 @@ class changeCSSApp
             else
             {   // element is not an array, so it is a single element, display content pane single element
                 $output .= '<div class="tab-pane fade' . $activeClass . '" id="nav-tab-content-' . $parentTabCount . '-' . $tabCount . '" role="tabpanel" aria-labelledby="nav-tab-' . $parentTabCount . '-' . $tabCount . '">';
-                $output .= '<p>Load css elements of selector <b>'.$selector.'</b> for property: <b>' . $element . '</b></p></div>';
+                $output .= '<p class="mt-3">Load css elements of selector <b>'.$selector.'</b> for property: <b>' . $element . '</b></p></div>';
                 $output .= '<div id="nav-tab-content-box-content-' . $parentTabCount . '-' . $tabCount . '"></div>';
             }
             // increment tab counter
@@ -355,16 +355,24 @@ class changeCSSApp
         // Define the mapping array
         $mapping = [
             'Fonts' => [
-                'Default' => ['.h1', '.h2', '.h3', '.h4', '.h5', '.h6', 'p', 'a'],
+                'Fonts' => [
+                    'H1' => ['.h1'],
+                    'H2' => ['.h2'],
+                    'H3' => ['.h3'],
+                    'H4' => ['.h4'],
+                    'H5' => ['.h5'],
+                    'H6' => ['.h6'],
+                    'Paragraph' => ['.p'],
+                    'Link' => ['.a'],
             ],
             'Navigation' => [
-                'Default' => ['.nav'],
+                'Navigation' => ['.nav'],
                 'Navbar' => ['.navbar'],
                 'Nav Tabs' => ['.nav-tabs'],
                 'Nav Pills' => ['.nav-pills'],
             ],
             'Buttons' => [
-                'Default' => ['.btn'],
+                'Buttons' => ['.btn'],
                 'Primary' => ['.btn-primary'],
                 'Secondary' => ['.btn-secondary'],
                 'Info' => ['.btn-info'],
@@ -375,13 +383,13 @@ class changeCSSApp
                 'Danger' => ['.btn-danger'],
             ],
             'Table' => [
-                'Default' => ['.table'],
+                'Table' => ['.table'],
                 'Dark' => ['.table-dark'],
                 'Hover' => ['.table-hover'],
                 'Responsive' => ['.table-responsive'],
             ],
             'Forms' => [
-                'Default' => ['.form-control'],
+                'Forms' => ['.form-control'],
                 'Form Check' => ['.form-check'],
                 'Form Inline' => ['.form-inline'],
                 'Form Group' => ['.form-group'],
@@ -394,14 +402,14 @@ class changeCSSApp
                 'Range' => ['.custom-range'],
             ],
             'Carousel' => [
-                'Default' => ['.carousel'],
+                'Carousel' => ['.carousel'],
                 'Item' => ['.carousel-item'],
                 'Fade' => ['.carousel-fade'],
                 'Control' => ['.carousel-control'],
                 'Indicators' => ['.carousel-indicators'],
             ],
             'Alert' => [
-                'Default' => ['.alert'],
+                'Alert' => ['.alert'],
                 'Primary' => ['.alert-primary'],
                 'Secondary' => ['.alert-secondary'],
                 'Info' => ['.alert-info'],
@@ -410,11 +418,11 @@ class changeCSSApp
                 'Danger' => ['.alert-danger'],
             ],
             'List Group' => [
-                'Default' => ['.list-group'],
+                'List Group' => ['.list-group'],
                 'Item' => ['.list-group-item'],
             ],
             'Modal' => [
-                'Default' => ['.modal'],
+                'Modal' => ['.modal'],
                 'Dialog' => ['.modal-dialog'],
                 'Backdrop' => ['.modal-backdrop'],
                 'Header' => ['.modal-header'],
@@ -422,7 +430,7 @@ class changeCSSApp
                 'Footer' => ['.modal-footer'],
             ],
             'Positions' => [
-                'Default' => ['.pos-'],
+                'Positions' => ['.pos-'],
                 'Footer' => ['.pos-footer'],
             ],
         ];
