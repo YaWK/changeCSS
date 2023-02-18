@@ -141,7 +141,7 @@ class changeCSSApp
         // init first tab active flag as boolean
         $firstTabActive = true;
         // loop through all tab elements (draw navigation tabs)
-        foreach ($tabElements as $key => $element) {
+        foreach ($tabElements as $selector => $element) {
             // init active class
             $activeClass = '';
             // check if first tab is active
@@ -153,10 +153,10 @@ class changeCSSApp
             // check if element is an array (contains sub elements)
             if (is_array($element))
             {   // element is an array, so it contains sub elements
-                $output .= '<a class="nav-item nav-link' . $activeClass . '" id="nav-tab-' . $parentTabCount . '-' . $tabCount . '" data-toggle="tab" href="#nav-tab-content-' . $parentTabCount . '-' . $tabCount . '" role="tab" aria-controls="nav-tab-' . $parentTabCount . '-' . $tabCount . '" aria-selected="false">' . $key . '</a>';
+                $output .= '<a class="nav-item nav-link' . $activeClass . '" id="nav-tab-' . $parentTabCount . '-' . $tabCount . '" data-toggle="tab" href="#nav-tab-content-' . $parentTabCount . '-' . $tabCount . '" role="tab" aria-controls="nav-tab-' . $parentTabCount . '-' . $tabCount . '" aria-selected="false">' . $selector . '</a>';
             } else
             {   // element is not an array, so it is a single element
-                $output .= '<a class="nav-item nav-link' . $activeClass . '" id="nav-tab-' . $parentTabCount . '-' . $tabCount . '" data-toggle="tab" href="#nav-tab-content-' . $parentTabCount . '-' . $tabCount . '" role="tab" aria-controls="nav-tab-' . $parentTabCount . '-' . $tabCount . '" aria-selected="false">' . $element . '</a>';
+                $output .= '<a class="nav-item nav-link' . $activeClass . '" id="nav-tab-' . $parentTabCount . '-' . $tabCount . '" data-selector="'.$selector.'" data-element="'.$element.'" data-toggle="tab" href="#nav-tab-content-' . $parentTabCount . '-' . $tabCount . '" role="tab" aria-controls="nav-tab-' . $parentTabCount . '-' . $tabCount . '" aria-selected="false">' . $element . '</a>';
             }
             // increment tab counter
             $tabCount++;
@@ -172,7 +172,7 @@ class changeCSSApp
         // reset first tab active flag, will be used to set the first tab content pane to active
         $firstTabActive = true;
         // loop through all tab elements
-        foreach ($tabElements as $key => $element)
+        foreach ($tabElements as $selector => $element)
         {   // init active class
             $activeClass = '';
             // check if first content pane is active
@@ -192,7 +192,7 @@ class changeCSSApp
             else
             {   // element is not an array, so it is a single element, display content pane single element
                 $output .= '<div class="tab-pane fade' . $activeClass . '" id="nav-tab-content-' . $parentTabCount . '-' . $tabCount . '" role="tabpanel" aria-labelledby="nav-tab-' . $parentTabCount . '-' . $tabCount . '">';
-                $output .= '<p>Load css elements of selector for property: <b>' . $element . '</b></p></div>';
+                $output .= '<p>Load css elements of selector <b>'.$selector.'</b> for property: <b>' . $element . '</b></p></div>';
                 $output .= '<div id="nav-tab-content-box-content-' . $parentTabCount . '-' . $tabCount . '"></div>';
             }
             // increment tab counter
